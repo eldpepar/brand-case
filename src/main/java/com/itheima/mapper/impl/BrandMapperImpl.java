@@ -12,13 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BrandMapperImpl implements BrandMapper {
-
+    private Connection connection = null;
+    private PreparedStatement  preparedStatement = null;
+    private ResultSet resultSet = null;
     @Override
     public List<Brand> selectAll() {
-        Connection connection = null;
         String sql = "select * from tb_brand";
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
         List<Brand> list = new ArrayList<>();
         try {
             connection = JDBCUtils.getConnection();
@@ -41,80 +40,72 @@ public class BrandMapperImpl implements BrandMapper {
     @Override
     public void add(Brand brand) {
         System.out.println(brand);
-        Connection conn = null;
-        PreparedStatement psmt = null;
         try {
             //1.获取连接
-            conn = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             //2.定义sql
             String sql = "INSERT INTO tb_brand(id,brand_name,company_name,ordered,description,status) values(null,?,?,?,?,?)";
 
-            psmt = conn.prepareStatement(sql);
-            psmt.setString(1,brand.getBrandName());
-            psmt.setString(2,brand.getCompanyName());
-            psmt.setInt(3,brand.getOrdered());
-            psmt.setString(4,brand.getDescription());
-            psmt.setInt(5,brand.getStatus());
-            psmt.executeUpdate();
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1,brand.getBrandName());
+            preparedStatement.setString(2,brand.getCompanyName());
+            preparedStatement.setInt(3,brand.getOrdered());
+            preparedStatement.setString(4,brand.getDescription());
+            preparedStatement.setInt(5,brand.getStatus());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JDBCUtils.close(conn,psmt);
+            JDBCUtils.close(connection,preparedStatement);
         }
     }
 
     @Override
     public void delById(Integer id) {
-        Connection conn = null;
-        PreparedStatement psmt = null;
         try {
             //1.获取连接
-            conn = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             //2.定义sql
             String sql = "DELETE FROM tb_brand WHERE id=?";
-            psmt = conn.prepareStatement(sql);
-            psmt.setInt(1,id);
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1,id);
             //3.删除数据
-            psmt.executeUpdate();
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JDBCUtils.close(conn,psmt);
+            JDBCUtils.close(connection,preparedStatement);
         }
     }
 
     @Override
     public void edit(Brand brand) {
         System.out.println("edit-----------"+"\n"+brand);
-        Connection conn = null;
-        PreparedStatement psmt = null;
+
         try {
             //1.获取连接
-            conn = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             //2.定义sql
             String sql = "UPDATE tb_brand SET brand_name=?,company_name=?,ordered=?,description=?,status=? WHERE id=?";
 
-            psmt = conn.prepareStatement(sql);
-            psmt.setString(1,brand.getBrandName());
-            psmt.setString(2,brand.getCompanyName());
-            psmt.setInt(3,brand.getOrdered());
-            psmt.setString(4,brand.getDescription());
-            psmt.setInt(5,brand.getStatus());
-            psmt.setInt(6,brand.getId());
-            psmt.executeUpdate();
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1,brand.getBrandName());
+            preparedStatement.setString(2,brand.getCompanyName());
+            preparedStatement.setInt(3,brand.getOrdered());
+            preparedStatement.setString(4,brand.getDescription());
+            preparedStatement.setInt(5,brand.getStatus());
+            preparedStatement.setInt(6,brand.getId());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JDBCUtils.close(conn,psmt);
+            JDBCUtils.close(connection,preparedStatement);
         }
     }
 
     @Override
     public List<Brand> selectByPage(int pageSize, int pageIndex) {
-        Connection connection = null;
         String sql = "select * from tb_brand LIMIT ? OFFSET ?";
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
         List<Brand> list = new ArrayList<>();
         try {
             connection = JDBCUtils.getConnection();
@@ -138,10 +129,7 @@ public class BrandMapperImpl implements BrandMapper {
 
     @Override
     public List<Brand> selectByPageAndConditions(int pageSize, int pageIndex, Brand brand) {
-        Connection connection = null;
         String sql = "select * from tb_brand WHERE status=? OR company_name=? OR brand_name=? LIMIT ? OFFSET ? ";
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
         List<Brand> list = new ArrayList<>();
         try {
             connection = JDBCUtils.getConnection();
